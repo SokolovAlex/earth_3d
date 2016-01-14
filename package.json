@@ -1,0 +1,22 @@
+{
+  "name": "earth_3d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SokolovAlex/earth_3d.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SokolovAlex/earth_3d/issues"
+  },
+  "homepage": "https://github.com/SokolovAlex/earth_3d#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
