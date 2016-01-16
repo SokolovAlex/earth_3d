@@ -1,0 +1,61 @@
+/**
+ * Created by Pavel Akulov on 24.11.2015.
+ * Email: akulov@magora-systems.ru
+ * Company: Magora Systems LLC
+ * Website: http://magora-systems.com
+ */
+
+@import "../../variables.styl"
+
+.globe-wrapper
+  position relative
+  background url("/assets/images/bg.jpg") no-repeat center top, #fff
+
+  .country-list-container
+    padding: 30px 60px;
+    position absolute
+    bottom 0
+    width: 100%
+    background-color rgba($white, 0.7);
+
+    .country-list-inner-container
+      overflow-x auto
+
+      .country-list
+        width (66+20)*20px // should be calculated for larger number of countries
+
+        .country-list-item
+          display inline-block
+          background-color $white
+          margin-right 20px
+
+          span
+            height 50px
+            cursor url(/assets/images/hand_1.png);
+
+          &:last-item
+            margin 0;
+
+
+  .zoom_control
+    position absolute
+    font-size 23px
+    top 41px
+    right 43px
+    text-align center
+
+    div
+      cursor: pointer;
+      background-color: transparent;
+      border: 2px solid #fff;
+      padding: 17px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 8px;
+      margin-bottom: 10px;
+      transition border-color $transition1ms, background-color $transition1ms
+
+      &:hover
+        border-color $blue
+        background-color $blue
