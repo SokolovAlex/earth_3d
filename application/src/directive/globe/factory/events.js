@@ -13,7 +13,7 @@
             currentCountry,
             dragging = false;
 
-        return function(countries, overlay, textureCache, geo, root, countriesCodes) {
+        return function(countries, overlay, textureCache, geo, root, countriesCodes, camera) {
 
             var settings = window.settings.globe;
 

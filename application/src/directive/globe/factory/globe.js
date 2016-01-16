@@ -36,7 +36,7 @@
 
         function createEarth(countries, segments) {
             var material = new THREE.MeshPhongMaterial({color: settings.oceanColor, transparent: true});
-            var sphere = new THREE.SphereGeometry(settings.earthRadius, segments, segments);
+            var sphere = new THREE.SphereGeometry(100, segments, segments);
             var baseGlobe = new THREE.Mesh(sphere, material);
             baseGlobe.rotation.y = Math.PI;
 
@@ -83,6 +83,17 @@
                 move: function(delta) {
                     mesh.rotateY( 1/32 * delta );
                 }
+            };
+        }
+
+        function createOverlay(segments) {
+            var material = new THREE.MeshPhongMaterial({color: "#FF0000", transparent: true});
+            var sphere = new THREE.SphereGeometry(150, segments, segments);
+            var _overlay = new THREE.Mesh(sphere, material);
+            _overlay.rotation.y = Math.PI;
+
+            return {
+                mesh: _overlay
             };
         }
 
@@ -208,17 +219,29 @@
                 var clouds = createClouds3(segments);
                 var stars = createStars(segments);
 
+                overlay = createOverlay(segments);
+
                 var root = new THREE.Object3D();
                 root.scale.set(2.5, 2.5, 2.5);
                 root.add(baseGlobe);
-                root.add(baseMap);
+
+                //root.add(baseMap);
 
                 root.add(clouds.mesh);
-                root.add(stars.mesh);
+
+                setTimeout(function() {
+                    root.remove(clouds.mesh);
+                }, 5000);
+
+
+                root.add(overlay.mesh);
+
+
+                //root.add(stars.mesh);
 
                 scene.add(root);
 
-                var events  = globeEvents(countries, overlay, textureCache, geo, root, countriesCodes);
+                var events  = globeEvents(countries, overlay, textureCache, geo, root, countriesCodes, camera);
 
                 canvas.addEventListener('mousedown', events.onMouseDown, false);
 
