@@ -8,7 +8,7 @@
             minZoom: 700,
             zoomStep: 30,
             earthRadius: 200,
-            cloudsRadius: 203,
+            cloudsRadius: 206,
             starsRadius: 1000,
             overlayRadius: 204
         }

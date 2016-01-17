@@ -114,14 +114,9 @@
                 if (country !== null && country.code !== currentCountry) {
                     currentCountry = country.code;
                     map = textureCache(country.code, settings.overlayColor);
+
                     material = new THREE.MeshPhongMaterial({map: map, transparent: true});
-                    if (!overlay) {
-                        overlay = new THREE.Mesh(new THREE.SphereGeometry(settings.overlayRadius, 40, 40), material);
-                        overlay.rotation.y = Math.PI;
-                        root.add(overlay);
-                    } else {
-                        overlay.material = material;
-                    }
+                    overlay.material = material;
                 }
             }
 
