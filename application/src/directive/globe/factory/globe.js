@@ -35,10 +35,10 @@
         }
 
         function createEarth(countries, segments) {
-            var material = new THREE.MeshPhongMaterial({color: settings.oceanColor, transparent: true,
-                polygonOffsetFactor: -1 ,
-                polygonOffset: true,
-                polygonOffsetUnits: 1});
+            var material = new THREE.MeshPhongMaterial({
+                color: settings.oceanColor,
+                transparent: true
+                });
             var sphere = new THREE.SphereGeometry(settings.earthRadius, segments, segments);
             var baseGlobe = new THREE.Mesh(sphere, material);
             baseGlobe.rotation.y = Math.PI;
@@ -47,13 +47,12 @@
 
             var worldTexture = mapTexture(countries, settings.countriesColor);
             var mapMaterial = new THREE.MeshPhongMaterial({
-                map: worldTexture, transparent: true,
-                polygonOffsetFactor: -1 ,
-                polygonOffset: true,
-                polygonOffsetUnits: 1});
+                map: worldTexture,
+                transparent: true
+                });
             var baseMap = new THREE.Mesh(new THREE.SphereGeometry(settings.earthRadius, segments, segments), mapMaterial);
             baseMap.rotation.y = Math.PI;
-            baseMap.renderOrder = 1;
+            baseMap.renderOrder = 0;
             return {
                 map: baseMap,
                 globe: baseGlobe
@@ -84,10 +83,6 @@
                 new THREE.MeshPhongMaterial({
                     map: loader.load('/assets/images/globe/images/fair_clouds_4k.png'),
                     side: THREE.DoubleSide,
-                    opacity: 0.5,
-                    polygonOffset: true,
-                    polygonOffsetUnits: 1,
-                    polygonOffsetFactor: 1,
                     transparent: true
                 })
             );
@@ -105,9 +100,6 @@
             var material = new THREE.MeshPhongMaterial({
                 transparent: true,
                 opacity: 0,
-                polygonOffsetFactor: 0,
-                polygonOffset: true,
-                polygonOffsetUnits: 1,
                 color: '#fff'
             });
             var sphere = new THREE.SphereGeometry(202, segments, segments);
@@ -122,11 +114,17 @@
         }
 
         function zoomIn() {
-            camera.translateZ(-settings.zoomStep);
+            var pos = _.clone(camera.position);
+            pos.z = pos.z - settings.zoomStep;
+            var tweenPos = utils.getTween.call(camera, 'position', pos);
+            d3.timer(tweenPos);
         }
 
         function zoomOut() {
-            camera.translateZ(settings.zoomStep);
+            var pos = _.clone(camera.position);
+            pos.z = pos.z + settings.zoomStep;
+            var tweenPos = utils.getTween.call(camera, 'position', pos);
+            d3.timer(tweenPos);
         }
 
         function init(container, width, height) {
@@ -150,8 +148,6 @@
                 renderer = sceneObj.renderer;
                 canvas = sceneObj.canvas[0][0];
                 camera = sceneObj.camera;
-
-                eventHelper.setOffset(sceneObj.offsetX, sceneObj.offsetY);
 
                 geoHelper.setSize(width, height);
 
