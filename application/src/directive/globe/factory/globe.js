@@ -12,7 +12,7 @@
 
     function globeFactory(geoHelper, sceneHelper, utils, eventHelper, mapTexture, globeEvents) {
         var controls;
-        var scene, renderer, canvas, camera, geo;
+        var scene, renderer, canvas, camera, geo, root, axes;
 
         var setEvents = eventHelper.setEvents;
 
@@ -96,6 +96,17 @@
             };
         }
 
+        function drawPoint(pos){
+            var mesh = new THREE.Mesh(
+                new THREE.SphereGeometry(10, 50, 50),
+                new THREE.MeshPhongMaterial({
+                    color: 0xff0000
+                }));
+
+            mesh.position.set(pos.x, pos.y, pos.z);
+            root.add(mesh);
+        }
+
         function createOverlay(segments) {
             var material = new THREE.MeshPhongMaterial({
                 transparent: true,
@@ -113,18 +124,81 @@
             };
         }
 
+        var showedAxes = true;
+        function showAxes() {
+            if (showedAxes) {
+                root.remove(axes);
+            } else {
+                root.add(axes);
+            }
+            showedAxes= !showedAxes;
+        }
+
         function zoomIn() {
             var pos = _.clone(camera.position);
-            pos.z = pos.z - settings.zoomStep;
+            var rot = camera.rotation;
+
+            var step = settings.zoomStep;
+
+            console.log(rot);
+            console.log(camera);
+
+
+            pos.z = pos.z + step * Math.sin(rot.z);
+            pos.y = pos.y + step * Math.sin(rot.y);
+            pos.x = pos.x + step * Math.sin(rot.x);
+
             var tweenPos = utils.getTween.call(camera, 'position', pos);
+
+            drawPoint(pos);
+
             d3.timer(tweenPos);
         }
 
         function zoomOut() {
             var pos = _.clone(camera.position);
-            pos.z = pos.z + settings.zoomStep;
+            var rot = camera.rotation;
+
+            var step = - settings.zoomStep;
+
+            console.log(rot);
+
+            pos.z = pos.z + step * Math.sin(rot.z);
+            pos.y = pos.y + step * Math.sin(rot.y);
+            pos.x = pos.x + step * Math.sin(rot.x);
             var tweenPos = utils.getTween.call(camera, 'position', pos);
+
+            drawPoint(pos);
+
+
             d3.timer(tweenPos);
+        }
+
+        function normalize() {
+            //controls.reset();
+            var copy = _.clone(camera);
+
+            //
+            //new TWEEN.Tween( camera.up ).to( controls.up0, 600 )
+            //    .easing( TWEEN.Easing.Sinusoidal.EaseInOut).start();
+
+            //debugger;
+
+            new TWEEN.Tween( camera.up ).to( controls.up0, 600 )
+                .easing( TWEEN.Easing.Sinusoidal.InOut).start();
+
+            //new TWEEN.Tween( camera.position ).to( {x:0,y:0,z:900}, 600 )
+            //    .easing( TWEEN.Easing.Sinusoidal.InOut).start();
+
+            //copy.up.copy( controls.up0 );
+            //
+            //copy.lookAt( controls.target0 );
+
+            //var tweenPos = utils.getTween.call(camera, 'position', copy.position);
+            //d3.timer(tweenPos);
+            //
+            //var tweenRot = utils.getTween.call(camera, 'rotaton', copy.rotation);
+            //d3.timer(tweenRot);
         }
 
         function init(container, width, height) {
@@ -143,7 +217,7 @@
                 var countries = topojson.feature(data, data.objects.countries);
                 geo = geoHelper.geodecoder(countries.features);
 
-                var sceneObj = sceneHelper.init(container, width, height);
+               var sceneObj = sceneHelper.init(container, width, height);
                 scene = sceneObj.scene;
                 renderer = sceneObj.renderer;
                 canvas = sceneObj.canvas[0][0];
@@ -165,7 +239,7 @@
 
                 var clouds = createClouds(segments);
 
-                var root = new THREE.Object3D();
+                root = new THREE.Object3D();
                 root.scale.set(2.5, 2.5, 2.5);
 
                 root.add(baseGlobe);
@@ -176,9 +250,70 @@
 
                 root.add(overlay);
 
-                root.add(stars.mesh);
+                //root.add(stars.mesh);
 
                 scene.add(root);
+
+                function buildAxes( length ) {
+                    var axes = new THREE.Object3D();
+
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( length, 0, 0 ), 0xFF0000, false ) ); // +X
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( -length, 0, 0 ), 0xFF0000, true) ); // -X
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, length, 0 ), 0x00FF00, false ) ); // +Y
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, -length, 0 ), 0x00FF00, true ) ); // -Y
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, length ), 0x0000FF, false ) ); // +Z
+                    axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, -length ), 0x0000FF, true ) ); // -Z
+
+                    var mz = new THREE.Mesh( new THREE.PlaneGeometry( 1000, 1000 ), new THREE.MeshBasicMaterial({
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.5,
+                        color: 0xFF0000}) );
+                    var mx = new THREE.Mesh( new THREE.PlaneGeometry( 1000, 1000 ), new THREE.MeshBasicMaterial({
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.5,
+                        color: 0x00FF00}) );
+                    var my = new THREE.Mesh( new THREE.PlaneGeometry( 1000, 1000 ), new THREE.MeshBasicMaterial({
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.5,
+                        color: 0x0000FF}) );
+
+                    mz.rotation.set(-Math.PI/2, Math.PI/2, Math.PI);
+                    my.rotation.set(-Math.PI/2, 0, 0);
+
+                    axes.add(mz);
+                    axes.add(mx);
+                    axes.add(my);
+
+                    return axes;
+
+                }
+
+                function buildAxis( src, dst, colorHex, dashed ) {
+                    var geom = new THREE.Geometry(),
+                        mat;
+
+                    if(dashed) {
+                        mat = new THREE.LineDashedMaterial({ linewidth: 8, color: colorHex, dashSize: 3, gapSize: 3 });
+                    } else {
+                        mat = new THREE.LineBasicMaterial({ linewidth: 8, color: colorHex });
+                    }
+
+                    geom.vertices.push( src.clone() );
+                    geom.vertices.push( dst.clone() );
+                    geom.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
+
+                    var axis = new THREE.Line( geom, mat, THREE.LinePieces );
+
+                    return axis;
+
+                }
+
+                axes = buildAxes(2000);
+
+                root.add(axes);
 
                 var events  = globeEvents(countries, overlay, textureCache, geo, root, countriesCodes, camera);
 
@@ -213,6 +348,8 @@
                     clouds.move(deltaMsec / 1000);
                     //stars.move(deltaMsec / 1000);
 
+                    TWEEN.update();
+
                     controls.update();
                     renderer.render(scene, camera);
                 });
@@ -224,7 +361,9 @@
         return {
             init: init,
             zoomIn: zoomIn,
-            zoomOut: zoomOut
+            zoomOut: zoomOut,
+            normalize: normalize,
+            showAxes: showAxes
         };
     }
 })(angular);

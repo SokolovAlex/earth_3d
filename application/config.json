@@ -35,6 +35,7 @@
       "bower_components/d3/d3.min.js",
       "bower_components/topojson/topojson.js",
       "bower_components/three.js/build/three.min.js",
+      "bower_components/tween.js/src/Tween.js",
       "bower_components/threejs-trackball-controls/TrackballControls.js"
      ],
     "dst": "js/vendor.js"

@@ -53,9 +53,9 @@
 
         globeCtrl.zoomOut = globe.zoomOut;
 
-        globeCtrl.dragFlag = function(e) {
+        globeCtrl.normalize = globe.normalize;
 
-        };
+        globeCtrl.showAxes =globe.showAxes;
     }
 
     angular

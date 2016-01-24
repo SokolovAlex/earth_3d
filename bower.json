@@ -37,6 +37,7 @@
     "signalr": "~2.2.0",
     "three.js": "threejs#*",
     "topojson": "~1.6.19",
-    "threejs-trackball-controls": "*"
+    "threejs-trackball-controls": "*",
+    "tween.js": "tweenjs#~16.3.4"
   }
 }
