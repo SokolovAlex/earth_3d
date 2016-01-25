@@ -14,6 +14,8 @@
         var controls;
         var scene, renderer, canvas, camera, geo, root, axes;
 
+        var loader = new THREE.TextureLoader();
+
         var setEvents = eventHelper.setEvents;
 
         var settings = window.settings.globe;
@@ -42,7 +44,6 @@
             var sphere = new THREE.SphereGeometry(settings.earthRadius, segments, segments);
             var baseGlobe = new THREE.Mesh(sphere, material);
             baseGlobe.rotation.y = Math.PI;
-
             baseGlobe.renderOrder = 0;
 
             var worldTexture = mapTexture(countries, settings.countriesColor);
@@ -63,7 +64,7 @@
             var mesh = new THREE.Mesh(
                 new THREE.SphereGeometry(settings.starsRadius, segments, segments),
                 new THREE.MeshBasicMaterial({
-                    map:  THREE.ImageUtils.loadTexture('/assets/images/globe/images/galaxy_starfield.png'),
+                    map:  loader.load('/assets/images/globe/images/galaxy_starfield.png'),
                     side: THREE.BackSide
                 })
             );
@@ -77,11 +78,10 @@
         }
 
         function createClouds(segments) {
-            var loader = new THREE.TextureLoader();
             var mesh = new THREE.Mesh(
                 new THREE.SphereGeometry(settings.cloudsRadius, segments, segments),
                 new THREE.MeshPhongMaterial({
-                    map: loader.load('/assets/images/globe/images/fair_clouds_4k.png'),
+                    map: loader.load('/assets/images/globe/images/fair_clouds_4к.png'),
                     side: THREE.DoubleSide,
                     transparent: true
                 })
@@ -170,7 +170,6 @@
 
             drawPoint(pos);
 
-
             d3.timer(tweenPos);
         }
 
@@ -243,14 +242,13 @@
                 root.scale.set(2.5, 2.5, 2.5);
 
                 root.add(baseGlobe);
-
                 root.add(baseMap);
-
-                root.add(clouds.mesh);
 
                 root.add(overlay);
 
-                //root.add(stars.mesh);
+                root.add(clouds.mesh);
+
+                root.add(stars.mesh);
 
                 scene.add(root);
 

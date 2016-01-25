@@ -8,7 +8,7 @@ var knownOptions = {
             env: 'dev',
             config: 'application',
             protocol: 'http://',
-            server: 'localhost:8090'
+            server: 'localhost:9990'
         }
     },
     minimist = require('minimist');
