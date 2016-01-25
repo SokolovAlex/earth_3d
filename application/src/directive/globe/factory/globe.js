@@ -134,43 +134,21 @@
             showedAxes= !showedAxes;
         }
 
-        function zoomIn() {
+        function zoom(R) {
+            var v1 = new THREE.Vector3( 0, 0, 1 );
             var pos = _.clone(camera.position);
-            var rot = camera.rotation;
-
-            var step = settings.zoomStep;
-
-            console.log(rot);
-            console.log(camera);
-
-
-            pos.z = pos.z + step * Math.sin(rot.z);
-            pos.y = pos.y + step * Math.sin(rot.y);
-            pos.x = pos.x + step * Math.sin(rot.x);
-
+            v1.applyQuaternion( camera.quaternion );
+            pos.add( v1.multiplyScalar( R ) );
             var tweenPos = utils.getTween.call(camera, 'position', pos);
-
-            drawPoint(pos);
-
             d3.timer(tweenPos);
         }
 
+        function zoomIn() {
+            zoom(-settings.zoomStep);
+        }
+
         function zoomOut() {
-            var pos = _.clone(camera.position);
-            var rot = camera.rotation;
-
-            var step = - settings.zoomStep;
-
-            console.log(rot);
-
-            pos.z = pos.z + step * Math.sin(rot.z);
-            pos.y = pos.y + step * Math.sin(rot.y);
-            pos.x = pos.x + step * Math.sin(rot.x);
-            var tweenPos = utils.getTween.call(camera, 'position', pos);
-
-            drawPoint(pos);
-
-            d3.timer(tweenPos);
+            zoom(settings.zoomStep);
         }
 
         function normalize() {
