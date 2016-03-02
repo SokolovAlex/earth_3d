@@ -139,12 +139,17 @@
             var pos = _.clone(camera.position);
             v1.applyQuaternion( camera.quaternion );
             pos.add( v1.multiplyScalar( R ) );
+
             var tweenPos = utils.getTween.call(camera, 'position', pos);
             d3.timer(tweenPos);
         }
 
         function zoomIn() {
             zoom(-settings.zoomStep);
+        }
+
+        function zoomIn() {
+            zoom(settings.zoomStep);
         }
 
         function zoomOut() {
